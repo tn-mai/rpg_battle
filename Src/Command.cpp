@@ -558,7 +558,7 @@ int wait_any_key()
       timer -= 1;
     }
     fontRenderer.Color(timer < 0.5f ? glm::vec4(1, 1, 1, 1) : glm::vec4(0.5f, 0.5f, 0.5f, 1));
-    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(760, 560));
+    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(0, text_y_offset));
     fontRenderer.AddString(markerPos, L"Þ");
     fontRenderer.UnmapBuffer();
 
