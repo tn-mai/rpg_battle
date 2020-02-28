@@ -22,6 +22,10 @@ UniformBufferPtr UniformBuffer::Create(GLsizeiptr size, GLuint bindingPoint, con
     return {};
   }
 
+  GLint offsetAlignment = 0;
+  glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
+  size = ((size + offsetAlignment - 1) / offsetAlignment) * offsetAlignment;
+
   glGenBuffers(1, &p->ubo);
   glBindBuffer(GL_UNIFORM_BUFFER, p->ubo);
   glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
@@ -73,6 +77,7 @@ bool UniformBuffer::BufferSubData(const GLvoid* data, GLintptr offset, GLsizeipt
   }
   glBindBuffer(GL_UNIFORM_BUFFER, ubo);
   glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
   return true;
 }
 
@@ -84,25 +89,8 @@ bool UniformBuffer::BufferSubData(const GLvoid* data, GLintptr offset, GLsizeipt
 */
 void UniformBuffer::BindBufferRange(GLintptr offset, GLsizeiptr size) const
 {
+  if (size <= 0) {
+    return;
+  }
   glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, ubo, offset, size);
-}
-
-/**
-* UBOをシステムメモリにマップする.
-*
-* @return マップしたメモリへのポインタ.
-*/
-void* UniformBuffer::MapBuffer() const
-{
-  glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-  return glMapBufferRange(
-    GL_UNIFORM_BUFFER, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-}
-
-/**
-* バッファの割り当てを解除する.
-*/
-void UniformBuffer::UnmapBuffer() const
-{
-  glUnmapBuffer(GL_UNIFORM_BUFFER);
 }
