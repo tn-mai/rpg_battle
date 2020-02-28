@@ -68,6 +68,7 @@ void VertexArrayObject::Destroy()
 /**
 * 頂点アトリビュートを設定する.
 *
+* @param vbo        頂点アトリビュートのVBO.
 * @param index      頂点アトリビュートのインデックス.
 * @param size       頂点アトリビュートの要素数.
 * @param type       頂点アトリビュートの型.
@@ -75,11 +76,15 @@ void VertexArrayObject::Destroy()
 * @param stride     次の頂点データまでのバイト数.
 * @param offset     頂点データ先頭からのバイトオフセット.
 */
-void VertexArrayObject::VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset)
+void VertexArrayObject::VertexAttribPointer(GLuint vbo, GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset)
 {
+  Bind();
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glEnableVertexAttribArray(index);
   glVertexAttribPointer(index, size, type, normalized, stride,
     reinterpret_cast<GLvoid*>(offset));
+  Unbind();
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 /**

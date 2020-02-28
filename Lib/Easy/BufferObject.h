@@ -37,7 +37,7 @@ public:
 
   void Init(GLuint vbo, GLuint ibo);
   void Destroy();
-  void VertexAttribPointer(GLuint index, GLint size, GLenum type,
+  void VertexAttribPointer(GLuint vbo, GLuint index, GLint size, GLenum type,
     GLboolean normalized, GLsizei stride, size_t offset);
   void Bind() const;
   void Unbind() const;
