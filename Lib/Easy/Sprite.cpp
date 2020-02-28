@@ -107,6 +107,8 @@ GLuint CreateVAO(GLuint vbo, GLuint ibo)
   SetVertexAttribPointer(2, Vertex, texCoord);
   SetVertexAttribIntPointer(3, Vertex, blendMode);
   glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   return vao;
 }
 
