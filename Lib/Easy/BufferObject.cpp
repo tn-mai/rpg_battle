@@ -2,6 +2,7 @@
 * @file BufferObject.cpp
 */
 #include "BufferObject.h"
+#include <iostream>
 
 /**
 * バッファオブジェクトを作成する.
@@ -45,6 +46,12 @@ void VertexArrayObject::Init(GLuint vbo, GLuint ibo)
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
   glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  const GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cerr << "[エラー] " << __func__ << ": VAOの作成に失敗.\n";
+  }
 }
 
 /**
