@@ -278,7 +278,7 @@ void select_string(double x, double y, int max, char* buffer);
 *
 * @return 0以上2^31-1以下のランダムな値.
 */
-int random();
+int rand();
 
 /**
 * アプリケーションを終了する.

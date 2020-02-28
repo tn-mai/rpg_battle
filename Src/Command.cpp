@@ -970,7 +970,7 @@ void select_string(double x, double y, int max, char* buffer)
     });
 }
 
-int random()
+int rand()
 {
   return std::uniform_int_distribution<int>(0, std::numeric_limits<int>::max())(randomEngine);
 }
