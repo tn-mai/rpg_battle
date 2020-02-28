@@ -377,10 +377,24 @@ void finalize()
 void set_text(double x, double y, const char* format, va_list ap)
 {
   char tmp[1024];
-  vsnprintf(tmp, sizeof(tmp), format, ap);
+  const int len = vsnprintf(tmp, sizeof(tmp), format, ap);
   va_end(ap);
 
-  const glm::vec2 opengl_pos = win_to_ogl_coord(x, y);
+  // カーソル位置を設定するエスケープシーケンス(\033)を処理.
+  glm::vec2 opengl_pos = win_to_ogl_coord(x, y);
+  for (int i = 0; i < len - 5; ++i) {
+    if (tmp[i] == 033 && tmp[i + 1] == '[') {
+      int row, col;
+      if (sscanf(tmp + i + 2, "%d:%df", &row, &col) == 2) {
+        opengl_pos = win_to_ogl_coord(row, col);
+        text_y_offset = col;
+        // fの次から0終端までをESCの位置にコピー.
+        const auto itr_term = std::find(tmp + i + 2, tmp + len, 'f');
+        std::copy(itr_term + 1, tmp + len + 1, tmp + i);
+      }
+    }
+  }
+
   textList.push_back({ screen_coord_to_clip_coord(opengl_pos), sjis_to_utf16(tmp) });
 }
 
