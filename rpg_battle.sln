@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rpg_battle", "rpg_battle.vcxproj", "{E73D9F64-221B-474F-BAEE-52370CDB833F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E73D9F64-221B-474F-BAEE-52370CDB833F}.Debug|x86.ActiveCfg = Debug|Win32
+		{E73D9F64-221B-474F-BAEE-52370CDB833F}.Debug|x86.Build.0 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {962AFBD9-22E3-4B09-8A23-A736175621D2}
+	EndGlobalSection
+EndGlobal
