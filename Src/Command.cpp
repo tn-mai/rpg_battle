@@ -426,8 +426,8 @@ void reset_all_text()
 
 void reset_text_area(double x, double y, double width, double height)
 {
-  const glm::vec2 min = screen_coord_to_clip_coord(win_to_ogl_coord(x, y));
-  const glm::vec2 max = screen_coord_to_clip_coord(win_to_ogl_coord(x + width, y + height));
+  const glm::vec2 min = screen_coord_to_clip_coord(win_to_ogl_coord(x, y + height));
+  const glm::vec2 max = screen_coord_to_clip_coord(win_to_ogl_coord(x + width, y));
   const auto itr = std::remove_if(textList.begin(), textList.end(), [min, max](const text_info& e) {
     return (e.pos.x >= min.x) && (e.pos.x < max.x) && (e.pos.y >= min.y) && (e.pos.y < max.y);
     });
