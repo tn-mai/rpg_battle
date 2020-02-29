@@ -515,16 +515,16 @@ void fade_out(double red, double green, double blue, double seconds)
 {
   colorFilter.Color(glm::vec4(red, green, blue, 0));
   colorFilter.action.init(0, 1, linear, seconds);
-  wait(seconds);
+  sleep(seconds);
 }
 
 void fade_in(double seconds)
 {
   colorFilter.action.init(1, 0, linear, seconds);
-  wait(seconds);
+  sleep(seconds);
 }
 
-void wait(double seconds)
+void sleep(double seconds)
 {
   fontRenderer.Color(glm::vec4(1));
   fontRenderer.MapBuffer();

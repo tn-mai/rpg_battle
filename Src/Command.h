@@ -191,7 +191,7 @@ void fade_in(double seconds);
 *
 * @param  seconds ‘Ò‚¿ŠÔ(•b).
 */
-void wait(double seconds);
+void sleep(double seconds);
 
 /**
 * ‰½‚©ƒL[‚ª“ü—Í‚³‚ê‚é‚Ü‚Å‘Ò‚Â.

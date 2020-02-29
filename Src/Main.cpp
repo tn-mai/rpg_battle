@@ -21,17 +21,17 @@ int main()
   printf("モンスターが現れた！");
 
   // 1秒待つ
-  wait(1);
+  sleep(1);
 
   // 文章を表示
   printf("勇者の攻撃！");
 
-  wait(1);
+  sleep(1);
 
   printf("モンスターに3のダメージ！");
   monster_hp = monster_hp - 3;
 
-  wait(1);
+  sleep(1);
 
   // 勝敗を判定する
   if (monster_hp <= 0) {
