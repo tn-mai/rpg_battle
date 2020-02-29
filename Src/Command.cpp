@@ -543,7 +543,8 @@ void wait(double seconds)
 int wait_any_key()
 {
   float timer = 0;
-  int result;
+  int result = 0;
+  bool isKeyReleased = false;
   main_loop([&] {
     GLFWEW::Window& window = GLFWEW::Window::Instance();
 
@@ -564,10 +565,14 @@ int wait_any_key()
 
     result = window.LastPressedKey();
     if (!result) {
+      isKeyReleased = true;
       const GamePad gamepad = window.GetGamePad();
       if (gamepad.buttonDown) {
         result = KEYCODE_GAMEPAD;
       }
+    }
+    if (!isKeyReleased) {
+      return 0;
     }
     return result;
     });
