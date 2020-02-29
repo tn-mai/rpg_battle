@@ -184,6 +184,9 @@ bool Renderer::AddString(const glm::vec2& position, const wchar_t* str)
     if (vboSize + 4 > vboCapacity) {
       break;
     }
+    if (*itr == L'\n') {
+      pos.y -= 40.0f * reciprocalScreenSize.y * scale.y;
+    }
     const FontInfo& font = fontList[*itr];
     if (font.id >= 0 && font.size.x && font.size.y) {
       const glm::vec2 size = font.size * reciprocalScreenSize * scale;

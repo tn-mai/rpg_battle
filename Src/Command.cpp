@@ -382,6 +382,7 @@ void set_text(double x, double y, const char* format, va_list ap)
 
   // カーソル位置を設定するエスケープシーケンス(\033)を処理.
   glm::vec2 opengl_pos = win_to_ogl_coord(x, y);
+  int crlfCount = 0;
   for (int i = 0; i < len - 5; ++i) {
     if (tmp[i] == 033 && tmp[i + 1] == '[') {
       int row, col;
@@ -392,10 +393,13 @@ void set_text(double x, double y, const char* format, va_list ap)
         const auto itr_term = std::find(tmp + i + 2, tmp + len, 'f');
         std::copy(itr_term + 1, tmp + len + 1, tmp + i);
       }
+    } else if (tmp[i] == '\n') {
+      ++crlfCount;
     }
   }
 
   textList.push_back({ screen_coord_to_clip_coord(opengl_pos), sjis_to_utf16(tmp) });
+  text_y_offset += crlfCount * 40;
 }
 
 void xyprintf(double x, double y, const char* format, ...)
@@ -559,7 +563,7 @@ int wait_any_key()
       timer -= 1;
     }
     fontRenderer.Color(timer < 0.5f ? glm::vec4(1, 1, 1, 1) : glm::vec4(0.5f, 0.5f, 0.5f, 1));
-    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(0, text_y_offset));
+    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(20, static_cast<double>(text_y_offset) - 10));
     fontRenderer.AddString(markerPos, L"∇");
     fontRenderer.UnmapBuffer();
 
