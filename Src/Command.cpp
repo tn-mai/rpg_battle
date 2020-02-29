@@ -44,7 +44,8 @@ const ImageNo image_no17(17);
 const ImageNo image_no18(18);
 const ImageNo image_no19(19);
 
-int text_y_offset = 0; // 自動改行テキストの表示Y座標.
+glm::vec2 base_text_offset = glm::vec2(0);
+glm::vec2 text_offset = glm::vec2(0); // 自動改行テキストの表示Y座標.
 
 namespace /* unnamed */ {
 
@@ -388,7 +389,7 @@ void set_text(double x, double y, const char* format, va_list ap)
       int row, col;
       if (sscanf(tmp + i + 2, "%d:%df", &row, &col) == 2) {
         opengl_pos = win_to_ogl_coord(row, col);
-        text_y_offset = col;
+        text_offset.y = static_cast<float>(col);
         // fの次から0終端までをESCの位置にコピー.
         const auto itr_term = std::find(tmp + i + 2, tmp + len, 'f');
         std::copy(itr_term + 1, tmp + len + 1, tmp + i);
@@ -399,7 +400,7 @@ void set_text(double x, double y, const char* format, va_list ap)
   }
 
   textList.push_back({ screen_coord_to_clip_coord(opengl_pos), sjis_to_utf16(tmp) });
-  text_y_offset += crlfCount * 40;
+  text_offset.y += crlfCount * 40;
 }
 
 void xyprintf(double x, double y, const char* format, ...)
@@ -413,14 +414,14 @@ void printf(const char* format, ...)
 {
   va_list ap;
   va_start(ap, format);
-  set_text(0, text_y_offset, format, ap);
-  text_y_offset += 40;
+  set_text(text_offset.x, text_offset.y, format, ap);
+  text_offset.y += 40;
 }
 
 void reset_all_text()
 {
   textList.clear();
-  text_y_offset = 0;
+  text_offset = base_text_offset;
 }
 
 void reset_text_area(double x, double y, double width, double height)
@@ -431,6 +432,12 @@ void reset_text_area(double x, double y, double width, double height)
     return (e.pos.x >= min.x) && (e.pos.x < max.x) && (e.pos.y >= min.y) && (e.pos.y < max.y);
     });
   textList.erase(itr, textList.end());
+}
+
+void set_text_base(double x, double y)
+{
+  base_text_offset = glm::vec2(x, y);
+  text_offset = base_text_offset;
 }
 
 void set_image(ImageNo no, double x, double y, const char* filename)
@@ -563,7 +570,7 @@ int wait_any_key()
       timer -= 1;
     }
     fontRenderer.Color(timer < 0.5f ? glm::vec4(1, 1, 1, 1) : glm::vec4(0.5f, 0.5f, 0.5f, 1));
-    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(20, static_cast<double>(text_y_offset) - 10));
+    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(text_offset.x, text_offset.y - 10.0f));
     fontRenderer.AddString(markerPos, L"∇");
     fontRenderer.UnmapBuffer();
 
@@ -696,8 +703,8 @@ int select(int count, const char* a, const char* b, ...)
 {
   va_list ap;
   va_start(ap, b);
-  const int result = select(0, text_y_offset, count, a, b, ap);
-  text_y_offset += 40;
+  const int result = select(text_offset.x, text_offset.y, count, a, b, ap);
+  text_offset.y += 40;
   return result;
 }
 
@@ -766,15 +773,15 @@ int select_number(double x, double y, int min, int max)
     i /= 10;
   }
   std::reverse(str.begin(), str.end());
-  xyprintf(fontRenderer.XAdvance(), text_y_offset, str.data());
-  text_y_offset += 40;
+  xyprintf(x, y, str.data());
+  text_offset.y += 40;
 
   return select;
 }
 
 int select_number(int min, int max)
 {
-  return select_number(0, text_y_offset, min, max);
+  return select_number(text_offset.x, text_offset.y, min, max);
 }
 
 void select_string(double x, double y, int max, char* buffer)

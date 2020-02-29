@@ -43,6 +43,14 @@ void reset_all_text();
 void reset_text_area(double x, double y, double width, double height);
 
 /**
+* 文字の表示位置の基準となる座標を設定する.
+*
+* @param x  基準となるX座標.
+* @param y  基準となるY座標.
+*/
+void set_text_base(double x, double y);
+
+/**
 * 画像を配置する.
 *
 * @param  no       画像の管理番号.
