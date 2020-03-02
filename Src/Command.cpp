@@ -453,7 +453,7 @@ void set_image(ImageNo no, double x, double y, const char* filename)
   } else {
     std::string str;
     str.reserve(1024);
-    str += "Res/";
+    str += "Res/âÊëú/";
     str += filename;
     tex = Texture::LoadFromFile(str.c_str());
     if (tex) {
@@ -1002,7 +1002,7 @@ void play_sound(const char* filename)
 {
   std::string str;
   str.reserve(1024);
-  str += "Res/";
+  str += "Res/âπê∫/";
   str += filename;
   const std::wstring ws = sjis_to_utf16(str.c_str());
   Audio::SoundPtr p = Audio::Engine::Get().PrepareMFStream(ws.c_str());
@@ -1019,7 +1019,7 @@ void play_bgm(const char* filename)
     bgmFilename = filename;
     std::string str;
     str.reserve(1024);
-    str += "Res/";
+    str += "Res/âπê∫/";
     str += filename;
     const std::wstring ws = sjis_to_utf16(str.c_str());
     bgm = Audio::Engine::Get().PrepareMFStream(ws.c_str());
