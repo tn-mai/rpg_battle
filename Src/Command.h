@@ -345,6 +345,28 @@ void initialize(const char* title);
 void finalize();
 
 /**
+* 色クラス.
+*/
+class color {
+public:
+  friend class image;
+  color(double r, double g, double b, double a) : r(r), g(g), b(b), a(a) {}
+  color(const color&) = delete;
+  ~color() = default;
+  color& operator=(const color& other) { r = other.r; g = other.g; b = other.b; a = other.a; return *this; }
+
+private:
+  double r, g, b, a;
+};
+
+extern const color color_red;
+extern const color color_green;
+extern const color color_blue;
+extern const color color_black;
+extern const color color_white;
+extern const color color_clear;
+
+/**
 * 画像制御番号.
 *
 * @note このクラスを直接使わずにno0～no19マクロを使うこと.
@@ -361,6 +383,45 @@ public:
 
 private:
   int no = 0;
+};
+
+/**
+* 画像制御クラス.
+*/
+class image
+{
+public:
+  image() = default;
+  image(double x, double y, const char* filename) : no(n) {
+    n = (n + 1) % 1024;
+    set_image(no, x, y, filename);
+  }
+  image(const image& other) : no(other.no) {}
+  ~image() = default;
+  const image& operator=(const image& other) { no = other.no; return *this; }
+
+  void move(double x, double y, int easing, double seconds) {
+    move_image(no, x, y, easing, seconds);
+  }
+  void scale(double x, double y, int easing, double seconds) {
+    scale_image(no, x, y, easing, seconds);
+  }
+  void rotate(double degree, int easing, double seconds) {
+    rotate_image(no, degree, easing, seconds);
+  }
+  void shear(double scale, int easing, double seconds) {
+    shear_image(no, scale, easing, seconds);
+  }
+  void color(const color& c, int mode, int easing, double seconds){
+    color_blend_image(no, c.r, c.g, c.b, c.a, mode, easing, seconds);
+  }
+  void clear() {
+    reset_image(no);
+  }
+
+private:
+  ImageNo no;
+  static int n;
 };
 
 // 画像制御番号変数のリスト.

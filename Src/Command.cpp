@@ -44,6 +44,15 @@ const ImageNo image_no17(17);
 const ImageNo image_no18(18);
 const ImageNo image_no19(19);
 
+const color color_red(1, 0, 0, 1);
+const color color_green(0, 1, 0, 1);
+const color color_blue(0, 0, 1, 1);
+const color color_black(0, 0, 0, 1);
+const color color_white(1, 1, 1, 1);
+const color color_clear(1, 1, 1, 0);
+
+int image::n = 0;
+
 glm::vec2 base_text_offset = glm::vec2(0);
 glm::vec2 text_offset = glm::vec2(0); // 自動改行テキストの表示Y座標.
 
@@ -570,7 +579,7 @@ int wait_any_key()
       timer -= 1;
     }
     fontRenderer.Color(timer < 0.5f ? glm::vec4(1, 1, 1, 1) : glm::vec4(0.5f, 0.5f, 0.5f, 1));
-    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(text_offset.x, text_offset.y - 10.0f));
+    const glm::vec2 markerPos = screen_coord_to_clip_coord(win_to_ogl_coord(text_offset.x, static_cast<double>(text_offset.y) - 10));
     fontRenderer.AddString(markerPos, L"∇");
     fontRenderer.UnmapBuffer();
 
