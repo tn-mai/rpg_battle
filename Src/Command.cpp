@@ -387,36 +387,45 @@ void finalize()
 void set_text(double x, double y, const char* format, va_list ap)
 {
   char tmp[1024];
-  const int len = vsnprintf(tmp, sizeof(tmp), format, ap);
+  int len = vsnprintf(tmp, sizeof(tmp), format, ap);
   va_end(ap);
 
   // カーソル位置を設定するエスケープシーケンス(\033)を処理.
   glm::vec2 opengl_pos = win_to_ogl_coord(x, y);
-  int crlfCount = 0;
-  for (int i = 0; i < len - 5; ++i) {
+  for (int i = 0; i < len - 3; ++i) {
     if (tmp[i] == 033 && tmp[i + 1] == '[') {
       int row, col;
+      char code;
       if (sscanf(tmp + i + 2, "%d:%df", &row, &col) == 2) {
         opengl_pos = win_to_ogl_coord(row, col);
-        text_offset.y = static_cast<float>(col);
+        text_offset = glm::vec2(row, col);
         // fの次から0終端までをESCの位置にコピー.
-        const auto itr_term = std::find(tmp + i + 2, tmp + len, 'f');
-        std::copy(itr_term + 1, tmp + len + 1, tmp + i);
+        const auto itr_term = std::find(tmp + i + 2, tmp + len, 'f') + 1;
+        std::copy(itr_term, tmp + len + 1, tmp + i);
+        len -= itr_term - &tmp[i];
+        i = -1;
+      } else if (sscanf(tmp + i + 2, "2%c", &code) == 1 && code == 'J') {
+        textList.clear();
+        // Jの次から0終端までをESCの位置にコピー.
+        const auto itr_term = std::find(tmp + i + 2, tmp + len, 'J') + 1;
+        std::copy(itr_term, tmp + len + 1, tmp + i);
+        len -= itr_term - &tmp[i];
+        i = -1;
       }
-    } else if (tmp[i] == '\n') {
-      ++crlfCount;
     }
   }
 
-  textList.push_back({ screen_coord_to_clip_coord(opengl_pos), sjis_to_utf16(tmp) });
-  text_offset.y += crlfCount * 40;
+  const std::wstring ws = sjis_to_utf16(tmp);
+  textList.push_back({ screen_coord_to_clip_coord(opengl_pos), ws });
+  text_offset += fontRenderer.CalcStringSize(ws.c_str());
 }
 
 void xyprintf(double x, double y, const char* format, ...)
 {
+  text_offset = glm::vec2(x, y);
   va_list ap;
   va_start(ap, format);
-  set_text(x, y, format, ap);
+  set_text(text_offset.x, text_offset.y, format, ap);
 }
 
 void printf(const char* format, ...)
@@ -424,16 +433,15 @@ void printf(const char* format, ...)
   va_list ap;
   va_start(ap, format);
   set_text(text_offset.x, text_offset.y, format, ap);
-  text_offset.y += 40;
 }
 
-void reset_all_text()
+void clear_text_all()
 {
   textList.clear();
   text_offset = base_text_offset;
 }
 
-void reset_text_area(double x, double y, double width, double height)
+void clear_text_area(double x, double y, double width, double height)
 {
   const glm::vec2 min = screen_coord_to_clip_coord(win_to_ogl_coord(x, y + height));
   const glm::vec2 max = screen_coord_to_clip_coord(win_to_ogl_coord(x + width, y));
@@ -519,12 +527,12 @@ void color_blend_image(ImageNo no, double red, double green, double blue, double
   e.Color(e.color.update(0));
 }
 
-void reset_image(ImageNo no)
+void clear_image(ImageNo no)
 {
   spriteBuffer[no].Texture({});
 }
 
-void reset_all_image()
+void clear_image_all()
 {
   for (auto& e : spriteBuffer) {
     e.Texture({});
@@ -558,6 +566,11 @@ void sleep(double seconds)
     seconds -= window.DeltaTime();
     return seconds <= 0;
     });
+}
+
+void usleep(double usec)
+{
+  sleep(usec / 1'000'000);
 }
 
 int wait_any_key()
@@ -713,7 +726,6 @@ int select(int count, const char* a, const char* b, ...)
   va_list ap;
   va_start(ap, b);
   const int result = select(text_offset.x, text_offset.y, count, a, b, ap);
-  text_offset.y += 40;
   return result;
 }
 

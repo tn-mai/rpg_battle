@@ -23,7 +23,7 @@ void printf(const char* format, ...);
 /**
 * すべての文字を消す.
 */
-void reset_all_text();
+void clear_text_all();
 
 /**
 * 指定した範囲内の文字を消す.
@@ -40,7 +40,7 @@ void reset_all_text();
 * 消去範囲を中央から右端までとした場合、この文字列は1文字も消えない.
 * 消去範囲を左端から中央までとした場合、この文字列はすべて消える.
 */
-void reset_text_area(double x, double y, double width, double height);
+void clear_text_area(double x, double y, double width, double height);
 
 /**
 * 文字の表示位置の基準となる座標を設定する.
@@ -166,7 +166,7 @@ void color_blend_image(ImageNo no, double red, double green, double blue, double
 /**
 * すべての画像を消す.
 */
-void reset_all_image();
+void clear_image_all();
 
 /**
 * 管理番号で指定された画像を消す.
@@ -175,7 +175,7 @@ void reset_all_image();
 *
 * 対象の画像がすでに消されていた場合は何もしない.
 */
-void reset_image(ImageNo no);
+void clear_image(ImageNo no);
 
 /**
 * 画面をフェードアウトする.
@@ -200,6 +200,13 @@ void fade_in(double seconds);
 * @param  seconds 待ち時間(秒).
 */
 void sleep(double seconds);
+
+/**
+* 一定時間待つ.
+*
+* @param  usec 待ち時間(マイクロ秒).
+*/
+void usleep(double usec);
 
 /**
 * 何かキーが入力されるまで待つ.
@@ -391,7 +398,7 @@ private:
 class image
 {
 public:
-  image() = default;
+  image() : no(n) { n = (n + 1) % 1024; }
   image(double x, double y, const char* filename) : no(n) {
     n = (n + 1) % 1024;
     set_image(no, x, y, filename);
@@ -415,9 +422,8 @@ public:
   void color(const color& c, int mode, int easing, double seconds){
     color_blend_image(no, c.r, c.g, c.b, c.a, mode, easing, seconds);
   }
-  void clear() {
-    reset_image(no);
-  }
+  void clear() { clear_image(no); }
+  void set(double x, double y, const char* filename) { set_image(no, x, y, filename); }
 
 private:
   ImageNo no;
