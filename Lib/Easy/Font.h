@@ -51,6 +51,7 @@ public:
   bool Propotional() const { return propotional; }
   void XAdvance(float x) { fixedAdvance = x; }
   float XAdvance() const { return fixedAdvance; }
+  glm::vec2 CalcStringSize(const wchar_t* str) const;
 
   bool AddString(const glm::vec2& position, const wchar_t* str);
   void MapBuffer();

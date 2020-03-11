@@ -166,6 +166,23 @@ bool Renderer::LoadFromFile(const char* filename)
 }
 
 /**
+* 文字列の横のピクセル数を調べる.
+*/
+glm::vec2 Renderer::CalcStringSize(const wchar_t* str) const
+{
+  glm::vec2 pos(0);
+  for (const wchar_t* itr = str; *itr; ++itr) {
+    if (*itr == L'\n') {
+      pos.x = 0;
+      pos.y += 40.0f * scale.y;
+    }
+    const FontInfo& font = fontList[*itr];
+    pos.x += (propotional ? font.xadvance : fixedAdvance) * scale.x;
+  }
+  return pos;
+}
+
+/**
 * 文字列を追加する.
 *
 * @param position 表示開始座標.
