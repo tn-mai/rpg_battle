@@ -6,40 +6,20 @@ int main()
   // プログラムの初期化処理
   initialize("モンスター・バトル");
 
-  // 勇者の体力
-  int hero_hp = 10;
-
-  // モンスターの体力
-  int monster_hp = 3;
-
   // 背景を表示
-  set_image(No_0, 400, 300, "bg_paper.jpg");
-
-  // モンスターを表示
-  set_image(No_1, 400, 300, "goblin.png");
-
-  printf("モンスターが現れた！");
-
-  // 1秒待つ
-  sleep(1);
+  image background;
+  background.set(400, 300, "bg_paper.jpg");
 
   // 文章を表示
-  printf("勇者の攻撃！");
-
-  sleep(1);
-
-  printf("モンスターに3のダメージ！");
-  monster_hp = monster_hp - 3;
-
-  sleep(1);
-
-  // 勝敗を判定する
-  if (monster_hp <= 0) {
-    printf("モンスターを倒した！");
-  }
+  printf("モンスターが現れた！\n");
 
   // 何かキーが押されるまで待つ
-  printf("何かキーを押すと終了します");
+  wait_any_key();
+
+  // 勇者のターン
+  printf("勇者の攻撃！\n");
+  printf("モンスターを倒した！\n");
+  printf("[何かキーを押すと終了します]\n");
   wait_any_key();
 
   // プログラムの終了処理
