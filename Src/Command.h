@@ -6,6 +6,16 @@ namespace Command {
 // 前方宣言.
 class ImageNo;
 
+// アニメーションの種類.
+enum class easing_type {
+  linear, // 等速で移動.
+  in,     // 加速しながら移動.
+  out,    // 減速しながら移動.
+  in_out, // 加速しながら移動を始めて、減速しながら停止する.
+  back,   // outに似ているが、少し行き過ぎてから戻ってきて停止する.
+  bounce, // outに似ているが、移動先座標で何度か弾んでから停止する.
+};
+
 /**
 * 文字を表示する.
 *
@@ -76,20 +86,14 @@ void set_image(ImageNo no, double x, double y, const char* filename);
 * @param  no      画像の管理番号.
 * @param  x       移動先のX座標.
 * @param  y       移動先のY座標.
-* @param  easing  補間方法:
-*                   0 等速で移動.
-*                   1 加速しながら移動.
-*                   2 減速しながら移動.
-*                   3 加速しながら移動を始めて、減速しながら停止する.
-*                   4 1に似ているが、少し行き過ぎてから戻ってきて停止する.
-*                   5 1に似ているが、移動先座標で何度か弾んでから停止する.
 * @param  seconds 動作時間(秒).
+* @param  easing  アニメーションの種類:
 *
 * 位置はウィンドウの左上を原点とし、左右がX軸(右がプラス方向)、上下がY軸(下がプラス方向)の座標系で指定する.
 * ウィンドウの大きさは横800ドット、縦600ドットである.
 * ここで指定する座標は画像の中心を指す.
 */
-void move_image(ImageNo no, double x, double y, int easing, double seconds);
+void move_image(ImageNo no, double x, double y, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
 /**
 * 画像を拡大・縮小する.
@@ -97,48 +101,30 @@ void move_image(ImageNo no, double x, double y, int easing, double seconds);
 * @param  no      画像の管理番号.
 * @param  x       拡大・縮小後のX方向の大きさ. マイナス値を設定すると左右が反転する.
 * @param  y       拡大・縮小後のY方向の大きさ. マイナス値を設定すると上下が反転する.
-* @param  easing  補間方法:
-*                   0 等速で拡大・縮小.
-*                   1 加速しながら拡大・縮小.
-*                   2 減速しながら拡大・縮小.
-*                   3 加速しながら拡大・縮小を始めて、減速しながら停止する.
-*                   4 1に似ているが、少し拡大・縮小し過ぎてから戻ってきて停止する.
-*                   5 1に似ているが、何度か弾むように拡大・縮小しなから停止する.
 * @param  seconds 動作時間(秒).
+* @param  easing  アニメーションの種類:
 */
-void scale_image(ImageNo no, double x, double y, int easing, double seconds);
+void scale_image(ImageNo no, double x, double y, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
 /**
 * 画像を回転する.
 *
 * @param  no      画像の管理番号.
 * @param  degree  回転させる角度(度数法). マイナス値を設定すると回転方向が逆になる.
-* @param  easing  補間方法:
-*                   0 等速で回転.
-*                   1 加速しながら回転.
-*                   2 減速しながら回転.
-*                   3 加速しながら回転を始めて、減速しながら停止する.
-*                   4 1に似ているが、少し回転し過ぎてから戻ってきて停止する.
-*                   5 1に似ているが、何度か弾みなから停止する.
 * @param  seconds 動作時間(秒).
+* @param  easing  アニメーションの種類:
 */
-void rotate_image(ImageNo no, double degree, int easing, double seconds);
+void rotate_image(ImageNo no, double degree, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
 /**
 * 画像を傾ける.
 *
 * @param  no      画像の管理番号.
 * @param  scale   傾ける比率. マイナス値を設定すると傾きが逆になる.
-* @param  easing  補間方法:
-*                   0 等速で傾く.
-*                   1 加速しながら傾く.
-*                   2 減速しながら傾く.
-*                   3 加速しながら傾き始めて、減速しながら停止する.
-*                   4 1に似ているが、少し傾き過ぎてから戻ってきて停止する.
-*                   5 1に似ているが、何度か弾みなから停止する.
 * @param  seconds 動作時間(秒).
+* @param  easing  アニメーションの種類:
 */
-void shear_image(ImageNo no, double scale, int easing, double seconds);
+void shear_image(ImageNo no, double scale, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
 /**
 * 画像と色を合成する.
@@ -148,20 +134,14 @@ void shear_image(ImageNo no, double scale, int easing, double seconds);
 * @param  green   合成する色の緑成分(0.0～1.0).
 * @param  blue    合成する色の青成分(0.0～1.0).
 * @param  alpha   合成する色の透明度(0.0～1.0).
-* @param  mod     合成方法:
+* @param  mode    合成方法:
 *                   0 乗算
 *                   1 加算
 *                   2 減算
-* @param  easing  補間方法:
-*                   0 等速で色を合成.
-*                   1 加速しながら色を合成.
-*                   2 減速しながら色を合成.
-*                   3 加速しながら合成を始めて、減速しながら停止する.
-*                   4 1に似ているが、少し色を出し過ぎてから戻ってきて停止する.
-*                   5 1に似ているが、何度か弾むように合成しなから停止する.
 * @param  seconds 動作時間(秒).
+* @param  easing  アニメーションの種類:
 */
-void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, int mode, int easing, double seconds);
+void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, int mode, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
 /**
 * すべての画像を消す.
@@ -366,12 +346,12 @@ private:
   double r, g, b, a;
 };
 
-extern const color color_red;
-extern const color color_green;
-extern const color color_blue;
-extern const color color_black;
-extern const color color_white;
-extern const color color_clear;
+extern const color color_red;   // 赤
+extern const color color_green; // 緑
+extern const color color_blue;  // 青
+extern const color color_black; // 黒
+extern const color color_white; // 白
+extern const color color_clear; // 透明
 
 /**
 * 画像制御番号.
@@ -407,20 +387,20 @@ public:
   ~image() = default;
   const image& operator=(const image& other) { no = other.no; return *this; }
 
-  void move(double x, double y, int easing, double seconds) {
-    move_image(no, x, y, easing, seconds);
+  void move(double x, double y, double seconds = 0.1, easing_type easing = easing_type::in_out) {
+    move_image(no, x, y, seconds, easing);
   }
-  void scale(double x, double y, int easing, double seconds) {
-    scale_image(no, x, y, easing, seconds);
+  void scale(double x, double y, double seconds = 0.1, easing_type easing = easing_type::in_out) {
+    scale_image(no, x, y, seconds, easing);
   }
-  void rotate(double degree, int easing, double seconds) {
-    rotate_image(no, degree, easing, seconds);
+  void rotate(double degree, double seconds = 0.1, easing_type easing = easing_type::in_out) {
+    rotate_image(no, degree, seconds, easing);
   }
-  void shear(double scale, int easing, double seconds) {
-    shear_image(no, scale, easing, seconds);
+  void shear(double scale, double seconds = 0.1, easing_type easing = easing_type::in_out) {
+    shear_image(no, scale, seconds, easing);
   }
-  void color(const color& c, int mode, int easing, double seconds){
-    color_blend_image(no, c.r, c.g, c.b, c.a, mode, easing, seconds);
+  void color(const color& c, int mode = 0, double seconds = 0.1, easing_type easing = easing_type::in_out){
+    color_blend_image(no, c.r, c.g, c.b, c.a, mode, seconds, easing);
   }
   void clear() { clear_image(no); }
   void set(double x, double y, const char* filename) { set_image(no, x, y, filename); }

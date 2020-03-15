@@ -59,19 +59,6 @@ glm::vec2 text_offset = glm::vec2(0); // 自動改行テキストの表示Y座標.
 namespace /* unnamed */ {
 
 /**
-* イージングの種類.
-*/
-enum easing_type
-{
-  linear,
-  ease_in,
-  ease_out,
-  ease_in_out,
-  ease_out_back,
-  ease_out_bounce,
-};
-
-/**
 * イージング制御クラス.
 */
 template<typename T>
@@ -79,15 +66,15 @@ struct action
 {
   T start = T{};
   T end = T{};
-  easing_type easing = linear;
+  easing_type easing = easing_type::linear;
   float seconds = 0;
 
   float timer = 0;
 
-  void init(const T& s, const T& e, int ease, double sec) {
+  void init(const T& s, const T& e, double sec, easing_type ease) {
     start = s;
     end = e;
-    easing = static_cast<easing_type>(glm::clamp(ease, 0, static_cast<int>(ease_out_bounce)));
+    easing = ease;
     seconds = static_cast<float>(sec);
     timer = 0;
   }
@@ -100,10 +87,11 @@ struct action
     float ratio = (timer / seconds);
     switch (easing) {
     default:
-    case linear: break;
-    case ease_in: ratio *= ratio; break;
-    case ease_out: ratio = 2.0f * ratio - ratio * ratio; break;
-    case ease_in_out:
+
+    case easing_type::linear: break;
+    case easing_type::in: ratio *= ratio; break;
+    case easing_type::out: ratio = 2.0f * ratio - ratio * ratio; break;
+    case easing_type::in_out:
       ratio *= 2.0f;
       if (ratio < 1.0f) {
         ratio *= ratio;
@@ -114,13 +102,13 @@ struct action
       }
       ratio *= 0.5f;
       break;
-    case ease_out_back: {
+    case easing_type::back: {
       static const float scale = 1.70158f * 1.525f;
       ratio -= 1;
       ratio = 1 + 2.70158f * ratio * ratio * ratio + 1.70158f * ratio * ratio;
       break;
     }
-    case ease_out_bounce: {
+    case easing_type::bounce: {
       if (ratio < (1 / 2.75f)) {
         ratio = 7.5625f * ratio * ratio;
       } else if (ratio < (2 / 2.75f)) {
@@ -159,11 +147,11 @@ struct actable_sprite : Sprite
   color_action color;
 
   void init_action() {
-    translate.init(Position(), Position(), linear, 0);
-    scale.init(Scale(), Scale(), linear, 0);
-    rotate.init(Rotation(), Rotation(), linear, 0);
-    shear.init(Shear(), Shear(), linear, 0);
-    color.init(Color(), Color(), linear, 0);
+    translate.init(Position(), Position(), 0, easing_type::linear);
+    scale.init(Scale(), Scale(), 0, easing_type::linear);
+    rotate.init(Rotation(), Rotation(), 0, easing_type::linear);
+    shear.init(Shear(), Shear(), 0, easing_type::linear);
+    color.init(Color(), Color(), 0, easing_type::linear);
   }
 
   virtual void Update(glm::f32 delta) override {
@@ -359,7 +347,7 @@ void initialize(const char* title)
   colorFilterRenderer.Init(1);
   colorFilter.Texture(Texture::Create(4, 4, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, planeTexData));
   colorFilter.Color(glm::vec4(0, 0, 0, 0));
-  colorFilter.action.init(0, 0, linear, 0);
+  colorFilter.action.init(0, 0, 0, easing_type::linear);
 
   fontRenderer.Init(1024, glm::vec2(window.Width(), window.Height()));
   fontRenderer.LoadFromFile("Res/Font/font.fnt");
@@ -491,39 +479,39 @@ void set_image(ImageNo no, double x, double y, const char* filename)
   }
 }
 
-void move_image(ImageNo no, double x, double y, int easing, double seconds)
+void move_image(ImageNo no, double x, double y, double seconds, easing_type easing)
 {
   auto& e = spriteBuffer[no];
-  e.translate.init(e.Position(), win_to_ogl_coord(x, y), easing, seconds);
+  e.translate.init(e.Position(), win_to_ogl_coord(x, y), seconds, easing);
   e.Position(glm::vec3(e.translate.update(0), 0));
 }
 
-void scale_image(ImageNo no, double x, double y, int easing, double seconds)
+void scale_image(ImageNo no, double x, double y, double seconds, easing_type easing)
 {
   auto& e = spriteBuffer[no];
-  e.scale.init(e.Scale(), glm::vec2(x, y), easing, seconds);
+  e.scale.init(e.Scale(), glm::vec2(x, y), seconds, easing);
   e.Scale(e.scale.update(0));
 }
 
-void rotate_image(ImageNo no, double degree, int easing, double seconds)
+void rotate_image(ImageNo no, double degree, double seconds, easing_type easing)
 {
   auto& e = spriteBuffer[no];
-  e.rotate.init(e.Rotation(), static_cast<float>(degree) * (glm::pi<float>() / 180.0f), easing, seconds);
+  e.rotate.init(e.Rotation(), static_cast<float>(degree) * (glm::pi<float>() / 180.0f), seconds, easing);
   e.Rotation(e.rotate.update(0));
 }
 
-void shear_image(ImageNo no, double scale, int easing, double seconds)
+void shear_image(ImageNo no, double scale, double seconds, easing_type easing)
 {
   auto& e = spriteBuffer[no];
-  e.shear.init(e.Shear(), static_cast<float>(scale), easing, seconds);
+  e.shear.init(e.Shear(), static_cast<float>(scale), seconds, easing);
   e.Shear(e.shear.update(0));
 }
 
-void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, int mode, int easing, double seconds)
+void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, int mode, double seconds, easing_type easing)
 {
   auto& e = spriteBuffer[no];
   e.ColorMode(static_cast<BlendMode>(glm::clamp(mode, 0, 2)));
-  e.color.init(e.Color(), glm::vec4(red, green, blue, alpha), easing, seconds);
+  e.color.init(e.Color(), glm::vec4(red, green, blue, alpha), seconds, easing);
   e.Color(e.color.update(0));
 }
 
@@ -542,13 +530,13 @@ void clear_image_all()
 void fade_out(double red, double green, double blue, double seconds)
 {
   colorFilter.Color(glm::vec4(red, green, blue, 0));
-  colorFilter.action.init(0, 1, linear, seconds);
+  colorFilter.action.init(0, 1, seconds, easing_type::linear);
   sleep(seconds);
 }
 
 void fade_in(double seconds)
 {
-  colorFilter.action.init(1, 0, linear, seconds);
+  colorFilter.action.init(1, 0, seconds, easing_type::linear);
   sleep(seconds);
 }
 
