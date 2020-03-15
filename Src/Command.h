@@ -16,6 +16,13 @@ enum class easing_type {
   bounce, // outに似ているが、移動先座標で何度か弾んでから停止する.
 };
 
+// 色の合成方法.
+enum class blend_mode {
+  mul, // 乗算.
+  add, // 加算.
+  sub, // 減算.
+};
+
 /**
 * 文字を表示する.
 *
@@ -87,7 +94,7 @@ void set_image(ImageNo no, double x, double y, const char* filename);
 * @param  x       移動先のX座標.
 * @param  y       移動先のY座標.
 * @param  seconds 動作時間(秒).
-* @param  easing  アニメーションの種類:
+* @param  easing  アニメーションの種類.
 *
 * 位置はウィンドウの左上を原点とし、左右がX軸(右がプラス方向)、上下がY軸(下がプラス方向)の座標系で指定する.
 * ウィンドウの大きさは横800ドット、縦600ドットである.
@@ -102,7 +109,7 @@ void move_image(ImageNo no, double x, double y, double seconds = 0.1, easing_typ
 * @param  x       拡大・縮小後のX方向の大きさ. マイナス値を設定すると左右が反転する.
 * @param  y       拡大・縮小後のY方向の大きさ. マイナス値を設定すると上下が反転する.
 * @param  seconds 動作時間(秒).
-* @param  easing  アニメーションの種類:
+* @param  easing  アニメーションの種類.
 */
 void scale_image(ImageNo no, double x, double y, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
@@ -112,7 +119,7 @@ void scale_image(ImageNo no, double x, double y, double seconds = 0.1, easing_ty
 * @param  no      画像の管理番号.
 * @param  degree  回転させる角度(度数法). マイナス値を設定すると回転方向が逆になる.
 * @param  seconds 動作時間(秒).
-* @param  easing  アニメーションの種類:
+* @param  easing  アニメーションの種類.
 */
 void rotate_image(ImageNo no, double degree, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
@@ -122,7 +129,7 @@ void rotate_image(ImageNo no, double degree, double seconds = 0.1, easing_type e
 * @param  no      画像の管理番号.
 * @param  scale   傾ける比率. マイナス値を設定すると傾きが逆になる.
 * @param  seconds 動作時間(秒).
-* @param  easing  アニメーションの種類:
+* @param  easing  アニメーションの種類.
 */
 void shear_image(ImageNo no, double scale, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
@@ -134,14 +141,14 @@ void shear_image(ImageNo no, double scale, double seconds = 0.1, easing_type eas
 * @param  green   合成する色の緑成分(0.0～1.0).
 * @param  blue    合成する色の青成分(0.0～1.0).
 * @param  alpha   合成する色の透明度(0.0～1.0).
-* @param  mode    合成方法:
-*                   0 乗算
-*                   1 加算
-*                   2 減算
+* @param  mode    色の合成方法:
+*                   blend_mode::mul 乗算
+*                   blend_mode::add 加算
+*                   blend_mode::sub 減算
 * @param  seconds 動作時間(秒).
-* @param  easing  アニメーションの種類:
+* @param  easing  アニメーションの種類.
 */
-void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, int mode, double seconds = 0.1, easing_type easing = easing_type::in_out);
+void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, blend_mode mode, double seconds = 0.1, easing_type easing = easing_type::in_out);
 
 /**
 * すべての画像を消す.
@@ -346,12 +353,16 @@ private:
   double r, g, b, a;
 };
 
-extern const color color_red;   // 赤
-extern const color color_green; // 緑
-extern const color color_blue;  // 青
-extern const color color_black; // 黒
-extern const color color_white; // 白
-extern const color color_clear; // 透明
+extern const color color_red;        // 赤
+extern const color color_yellow;     // 黄
+extern const color color_green;      // 緑
+extern const color color_light_blue; // 水色
+extern const color color_blue;       // 青
+extern const color color_purple;     // 紫
+extern const color color_black;      // 黒
+extern const color color_gray;       // 灰色
+extern const color color_white;      // 白
+extern const color color_clear;      // 透明
 
 /**
 * 画像制御番号.
@@ -399,7 +410,7 @@ public:
   void shear(double scale, double seconds = 0.1, easing_type easing = easing_type::in_out) {
     shear_image(no, scale, seconds, easing);
   }
-  void color(const color& c, int mode = 0, double seconds = 0.1, easing_type easing = easing_type::in_out){
+  void color(const color& c, blend_mode mode = blend_mode::mul, double seconds = 0, easing_type easing = easing_type::in_out){
     color_blend_image(no, c.r, c.g, c.b, c.a, mode, seconds, easing);
   }
   void clear() { clear_image(no); }

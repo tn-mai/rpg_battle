@@ -45,9 +45,13 @@ const ImageNo image_no18(18);
 const ImageNo image_no19(19);
 
 const color color_red(1, 0, 0, 1);
+const color color_yellow(1, 1, 0, 1);
 const color color_green(0, 1, 0, 1);
+const color color_light_blue(0, 1, 1, 1);
 const color color_blue(0, 0, 1, 1);
+const color color_purple(1, 0, 1, 1);
 const color color_black(0, 0, 0, 1);
+const color color_gray(0.5, 0.5, 0.5, 1);
 const color color_white(1, 1, 1, 1);
 const color color_clear(1, 1, 1, 0);
 
@@ -507,10 +511,10 @@ void shear_image(ImageNo no, double scale, double seconds, easing_type easing)
   e.Shear(e.shear.update(0));
 }
 
-void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, int mode, double seconds, easing_type easing)
+void color_blend_image(ImageNo no, double red, double green, double blue, double alpha, blend_mode mode, double seconds, easing_type easing)
 {
   auto& e = spriteBuffer[no];
-  e.ColorMode(static_cast<BlendMode>(glm::clamp(mode, 0, 2)));
+  e.ColorMode(static_cast<BlendMode>(glm::clamp(static_cast<int>(mode), 0, 2)));
   e.color.init(e.Color(), glm::vec4(red, green, blue, alpha), seconds, easing);
   e.Color(e.color.update(0));
 }
