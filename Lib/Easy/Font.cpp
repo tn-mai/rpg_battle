@@ -36,7 +36,7 @@ struct Vertex
 bool Renderer::Init(size_t maxChar, const glm::vec2& screen)
 {
   if (maxChar > (USHRT_MAX + 1) / 4) {
-    LOG("WARNING: %d‚ÍÝ’è‰Â”\‚ÈÅ‘å•¶Žš”‚ð‰z‚¦‚Ä‚¢‚Ü‚·.\n", maxChar);
+    LOG("WARNING: %zu‚ÍÝ’è‰Â”\‚ÈÅ‘å•¶Žš”‚ð‰z‚¦‚Ä‚¢‚Ü‚·.\n", maxChar);
     maxChar = (USHRT_MAX + 1) / 4;
   }
   vboCapacity = static_cast<GLsizei>(4 * maxChar);
@@ -326,7 +326,7 @@ void Renderer::Draw() const
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     progFont->UseProgram();
-    for (size_t i = 0; i < texList.size(); ++i) {
+    for (GLenum i = 0; i < texList.size(); ++i) {
       progFont->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, texList[i]->Id());
     }
     glDrawElements(GL_TRIANGLES, (vboSize / 4) * 6, GL_UNSIGNED_SHORT, 0);
