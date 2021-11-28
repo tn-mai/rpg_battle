@@ -1,6 +1,7 @@
 /**
 * @file SpriteAnimation.cpp
 */
+#define NOMINMAX
 #include "FrameAnimation.h"
 #include "Sprite.h"
 #include <algorithm>
@@ -40,7 +41,7 @@ void Animate::Update(Sprite& target, glm::f32 delta)
       }
     }
     auto itr = std::partition_point(timeline->data.begin(), timeline->data.end(), [this](const KeyFrame& e) { return e.time <= elapsedTime; });
-    keyFrameIndex = std::max(itr - timeline->data.begin() - 1, 0);
+    keyFrameIndex = std::max<size_t>(itr - timeline->data.begin() - 1, 0);
   }
 
   const KeyFrame& keyframe = timeline->data[keyFrameIndex];
